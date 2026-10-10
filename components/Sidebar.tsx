@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { signOut } from '@/lib/actions';
@@ -25,6 +26,10 @@ const NAV: { sec: string; items: { href: string; label: string; ico: string }[] 
 
 export default function Sidebar({ name, business, trialNote }: { name: string; business: string; trialNote: string | null }) {
   const pathname = usePathname();
+  // Su telefono il menu è una barra orizzontale: porta in vista la voce attiva.
+  useEffect(() => {
+    document.querySelector('.side-item.on')?.scrollIntoView({ block: 'nearest', inline: 'center' });
+  }, [pathname]);
   const initials = name.split(' ').map((p) => p[0]).join('').slice(0, 2).toUpperCase() || 'L';
   return (
     <aside className="side">
