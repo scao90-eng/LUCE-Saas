@@ -24,7 +24,7 @@ const NAV: { sec: string; items: { href: string; label: string; ico: string }[] 
   ] },
 ];
 
-export default function Sidebar({ name, business, trialNote }: { name: string; business: string; trialNote: string | null }) {
+export default function Sidebar({ name, business, logoUrl, trialNote }: { name: string; business: string; logoUrl: string | null; trialNote: string | null }) {
   const pathname = usePathname();
   // Su telefono il menu è una barra orizzontale: porta in vista la voce attiva.
   useEffect(() => {
@@ -34,8 +34,11 @@ export default function Sidebar({ name, business, trialNote }: { name: string; b
   return (
     <aside className="side">
       <div className="side-brand">
-        <div className="mark">L</div>
-        <div><b>Luce</b><span>{business || 'il tuo spazio olistico'}</span></div>
+        {logoUrl
+          // eslint-disable-next-line @next/next/no-img-element
+          ? <img className="side-logo" src={logoUrl} alt="" />
+          : <div className="mark">{(business || 'L').charAt(0).toUpperCase()}</div>}
+        <div><b>{business || 'Luce'}</b><span>{business ? 'con Luce' : 'il tuo spazio olistico'}</span></div>
       </div>
       <nav aria-label="Navigazione principale">
         {NAV.map((g) => (

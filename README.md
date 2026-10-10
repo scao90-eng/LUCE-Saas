@@ -17,6 +17,7 @@ nessun legame con RETI CRM.
 | **Co-conduzione** | Claude legge numeri dell'attività e del profilo e propone 3–5 azioni settimanali (perché, come, cosa misurare), da spuntare |
 | **Piano contenuti** | Piano editoriale settimanale generato sui dati: formato, pilastro, hook, didascalia, hashtag, data |
 | **Studio reel** | Script scena per scena (inquadratura, testo a schermo, voce), audio, consigli di ripresa, caption |
+| **Personalizzazione** | Ogni operatore sceglie i colori dell'app (6 combinazioni pronte o colori liberi, con anteprima immediata) e carica il proprio logo, che compare nella barra laterale e sulle slide |
 | **Abbonamento** | Prova gratuita 14 giorni, piani Base/Pro su Stripe, portale per fatture e disdetta, limite mensile generazioni AI |
 
 ## Stack
@@ -27,7 +28,7 @@ nessun legame con RETI CRM.
 
 ## Setup
 1. **Supabase**: crea un progetto NUOVO (regione EU). Dal SQL Editor esegui in ordine `supabase/schema.sql`
-   e `supabase/002_analisi_caroselli.sql` (sono rieseguibili). Authentication → URL configuration: imposta il Site URL dell'app.
+   `supabase/002_analisi_caroselli.sql` e `supabase/003_brand_logo.sql` (sono rieseguibili). Authentication → URL configuration: imposta il Site URL dell'app.
 2. **Variabili**: copia `.env.example` in `.env.local` e compila Supabase (URL, publishable key,
    service role key), `ANTHROPIC_API_KEY`, Stripe e `NEXT_PUBLIC_APP_URL`.
 3. **Stripe**: crea due prodotti con prezzo ricorrente mensile (Base, Pro) e metti gli ID prezzo in

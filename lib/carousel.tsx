@@ -41,8 +41,8 @@ const clean = (s: string) => s.replace(/\p{Extended_Pictographic}|️/gu, '').re
 // Corpo del testo più piccolo quando il testo è lungo.
 const fit = (text: string, sizes: [number, number][]) => sizes.find(([max]) => text.length <= max)?.[1] ?? sizes[sizes.length - 1][1];
 
-function SlideView({ slide, index, total, design, brand, handle, business }: {
-  slide: Slide; index: number; total: number; design: DesignId; brand: string; handle: string; business: string;
+function SlideView({ slide, index, total, design, brand, handle, business, logo }: {
+  slide: Slide; index: number; total: number; design: DesignId; brand: string; handle: string; business: string; logo: string | null;
 }) {
   const d = DESIGNS[design];
   const bg = d.bg(brand), accent = d.accent(brand);
@@ -55,8 +55,12 @@ function SlideView({ slide, index, total, design, brand, handle, business }: {
       <div style={{ position: 'absolute', display: 'flex', width: 620, height: 620, borderRadius: 620, right: -200, top: -180, background: accent, opacity: 0.13 }} />
       <div style={{ position: 'absolute', display: 'flex', width: 300, height: 300, borderRadius: 300, left: -120, bottom: 120, border: `3px solid ${accent}`, opacity: 0.25 }} />
 
-      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 30, color: d.soft, letterSpacing: 2 }}>
-        <span>{(business || handle).toUpperCase()}</span>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: 30, color: d.soft, letterSpacing: 2 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 18 }}>
+          {/* eslint-disable-next-line @next/next/no-img-element, jsx-a11y/alt-text */}
+          {logo && <img src={logo} width={isCover ? 120 : 76} height={isCover ? 120 : 76} style={{ objectFit: 'contain', borderRadius: 16 }} />}
+          <span>{(business || handle).toUpperCase()}</span>
+        </div>
         <span>{index + 1}/{total}</span>
       </div>
 
@@ -96,12 +100,12 @@ function SlideView({ slide, index, total, design, brand, handle, business }: {
 }
 
 export async function renderSlide(opts: {
-  slides: Slide[]; index: number; design: DesignId; brand: string; handle: string; business: string;
+  slides: Slide[]; index: number; design: DesignId; brand: string; handle: string; business: string; logo?: string | null;
   headers?: Record<string, string>;
 }) {
   return new ImageResponse(
     <SlideView slide={opts.slides[opts.index]} index={opts.index} total={opts.slides.length}
-      design={opts.design} brand={opts.brand} handle={opts.handle} business={opts.business} />,
+      design={opts.design} brand={opts.brand} handle={opts.handle} business={opts.business} logo={opts.logo ?? null} />,
     { width: SLIDE_W, height: SLIDE_H, fonts: await loadFonts(), headers: opts.headers },
   );
 }

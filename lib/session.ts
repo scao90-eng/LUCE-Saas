@@ -8,6 +8,7 @@ export type Profile = {
   id: string; full_name: string | null; business_name: string | null; discipline: string | null;
   city: string | null; target: string | null; tone: string | null; instagram_handle: string | null;
   brand_color?: string | null; carousel_design?: string | null;
+  sidebar_color?: string | null; logo_url?: string | null;
 };
 export type Subscription = {
   plan: PlanId; status: string; trial_ends_at: string; current_period_end: string | null;
