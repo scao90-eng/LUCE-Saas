@@ -1,6 +1,7 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type { Profile } from '@/lib/session';
 import { monthStart } from '@/lib/format';
+import { methodGuidance } from '@/lib/methods';
 
 export type Tx = { kind: 'entrata' | 'spesa'; amount: number; category: string; occurred_on: string };
 export type Snapshot = { platform: string; taken_on: string; followers: number; reach: number | null; profile_visits: number | null; link_clicks: number | null };
@@ -89,6 +90,7 @@ export async function buildAiContext(supabase: SupabaseClient, profile: Profile)
     `## Operatore`,
     `Disciplina: ${profile.discipline || 'non indicata'} · Attività: ${profile.business_name || '—'} · Città: ${profile.city || '—'}`,
     `Pubblico target: ${profile.target || 'non indicato'} · Tono di voce: ${profile.tone || 'caldo, autentico, professionale'}`,
+    methodGuidance(profile.discipline),
     ``,
     `## Attività (ultimi 3 mesi)`,
     ...monthlyTotals(tx).map((m) => `- ${m.month}: entrate ${m.entrate.toFixed(0)}€, spese ${m.spese.toFixed(0)}€, margine ${m.margine.toFixed(0)}€`),

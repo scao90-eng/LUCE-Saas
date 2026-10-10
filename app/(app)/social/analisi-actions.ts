@@ -7,6 +7,7 @@ import { requireActive, fail, done } from '@/lib/session';
 import { generateJson, assertAiCredit, recordAiUse, AiError, SYSTEM_BASE } from '@/lib/ai';
 import { parseUsername, fetchPublicProfile, publicStats, igFormat, IgError, type PublicStats } from '@/lib/instagram';
 import { today } from '@/lib/format';
+import { methodGuidance } from '@/lib/methods';
 
 export type Audit = {
   voto: number;
@@ -69,6 +70,7 @@ export async function analyzeFromLink(formData: FormData) {
       system: AUDIT_SYSTEM,
       prompt: `${isOwn ? 'Profilo dell\'operatore' : `Profilo di riferimento (non è dell'operatore: individua cosa imparare)`}.\n` +
         `Attività dell'operatore: ${profile.discipline || 'n.d.'}, ${profile.city || ''}, pubblico: ${profile.target || 'n.d.'}.\n\n` +
+        (methodGuidance(profile.discipline) ? `${methodGuidance(profile.discipline)}\n\n` : '') +
         `Numeri pubblici:\n${JSON.stringify({ ...stats, top: undefined }, null, 1)}\n\n` +
         `Contenuti migliori: ${JSON.stringify(stats.top)}\n\n` +
         `Didascalie recenti:\n${captions.map((c, i) => `${i + 1}. ${c.caption.replace(/\s+/g, ' ')}`).join('\n')}`,
