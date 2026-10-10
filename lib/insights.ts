@@ -4,7 +4,7 @@ import { monthStart } from '@/lib/format';
 
 export type Tx = { kind: 'entrata' | 'spesa'; amount: number; category: string; occurred_on: string };
 export type Snapshot = { platform: string; taken_on: string; followers: number; reach: number | null; profile_visits: number | null; link_clicks: number | null };
-export type Post = { platform: string; published_on: string; format: string; topic: string | null; reach: number; likes: number; comments: number; saves: number; shares: number };
+export type Post = { platform: string; published_on: string; format: string; topic: string | null; reach: number; likes: number; comments: number; saves: number; shares: number; followers_base?: number | null };
 
 // ---------- Gestionale ----------
 export function monthlyTotals(txs: Tx[]) {
@@ -26,9 +26,12 @@ export function byCategory(txs: Tx[], kind: 'entrata' | 'spesa') {
 }
 
 // ---------- Social ----------
-// Engagement rate di un contenuto: interazioni / copertura.
-export const engagement = (p: Post) =>
-  p.reach > 0 ? (p.likes + p.comments + p.saves + p.shares) / p.reach : 0;
+// Engagement rate di un contenuto: interazioni / copertura. Per i post importati
+// da Instagram la copertura non è pubblica: si usa il numero di follower.
+export const engagement = (p: Post) => {
+  const base = p.reach > 0 ? p.reach : p.followers_base ?? 0;
+  return base > 0 ? (p.likes + p.comments + p.saves + p.shares) / base : 0;
+};
 
 export function formatPerformance(posts: Post[]) {
   const map = new Map<string, { n: number; reach: number; er: number; saves: number }>();

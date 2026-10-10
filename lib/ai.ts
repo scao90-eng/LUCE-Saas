@@ -19,7 +19,7 @@ export function aiConfigured() {
   return Boolean(process.env.ANTHROPIC_API_KEY);
 }
 
-type AiKind = 'coaching' | 'contenuti' | 'reel';
+type AiKind = 'coaching' | 'contenuti' | 'reel' | 'analisi' | 'carosello';
 
 // Verifica il limite mensile del piano prima di chiamare l'AI.
 export async function assertAiCredit(supabase: SupabaseClient, plan: PlanId) {
@@ -42,7 +42,8 @@ export async function recordAiUse(supabase: SupabaseClient, kind: AiKind) {
 // Chiamata a Claude con output JSON vincolato allo schema.
 export async function generateJson<T>(opts: {
   system: string;
-  prompt: string;
+  // Testo, oppure blocchi (es. immagini + testo) per le richieste con screenshot.
+  prompt: string | Anthropic.Beta.BetaContentBlockParam[];
   schema: Record<string, unknown>;
   effort?: 'low' | 'medium' | 'high';
 }): Promise<T> {

@@ -5,7 +5,7 @@ import { setContentStatus, deleteContent } from '@/app/(app)/contenuti/actions';
 export type Scene = { secondi: string; visivo: string; testo_schermo: string; voce: string };
 export type ContentItem = {
   id: string; format: string; title: string; pillar: string | null; hook: string | null; caption: string | null;
-  hashtags: string | null; planned_for: string | null; status: string;
+  hashtags: string | null; planned_for: string | null; status: string; slides?: unknown[] | null;
   script: { durata_secondi?: number; scene?: Scene[]; audio?: string; cta?: string; consigli_ripresa?: string } | null;
 };
 
@@ -56,6 +56,9 @@ export default function ContentCard({ c }: { c: ContentItem }) {
         {c.format === 'reel' && !c.script?.scene?.length && (
           <Link className="btn sm" href={`/reel?tema=${encodeURIComponent(c.title)}`}>▶ Crea lo script</Link>
         )}
+        {c.format === 'carosello' && (c.slides?.length
+          ? <Link className="btn sm" href={`/caroselli/${c.id}`}>▦ Vedi le slide</Link>
+          : <Link className="btn sm" href={`/caroselli?tema=${encodeURIComponent(c.title)}&da=${c.id}`}>▦ Crea le slide</Link>)}
         <form action={deleteContent}><input type="hidden" name="id" value={c.id} /><button className="btn sm ghost" type="submit">Elimina</button></form>
       </div>
     </div>

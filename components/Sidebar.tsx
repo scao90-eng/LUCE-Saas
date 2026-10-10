@@ -14,6 +14,7 @@ const NAV: { sec: string; items: { href: string; label: string; ico: string }[] 
     { href: '/social', label: 'Analisi profilo', ico: '◎' },
     { href: '/co-conduzione', label: 'Co-conduzione', ico: '✦' },
     { href: '/contenuti', label: 'Piano contenuti', ico: '❖' },
+    { href: '/caroselli', label: 'Caroselli', ico: '▦' },
     { href: '/reel', label: 'Studio reel', ico: '▶' },
   ] },
   { sec: 'Account', items: [

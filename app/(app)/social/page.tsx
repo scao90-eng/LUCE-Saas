@@ -6,13 +6,21 @@ import { requireSession } from '@/lib/session';
 import { engagement, formatPerformance, bestWeekday, followerGrowth, type Post, type Snapshot } from '@/lib/insights';
 import { num, pct, dateIt, today } from '@/lib/format';
 import { addSnapshot, addPost, deletePost } from './actions';
+import { analyzeFromLink, analyzeFromScreenshots } from './analisi-actions';
+import ScreenshotUpload from '@/components/ScreenshotUpload';
+import SubmitButton from '@/components/SubmitButton';
+import { igConfigured } from '@/lib/instagram';
+
+export const maxDuration = 120;
 
 export default async function Social({ searchParams }: { searchParams: { ok?: string; error?: string } }) {
   const { supabase, profile } = await requireSession();
-  const [{ data: snaps }, { data: posts }] = await Promise.all([
+  const [{ data: snaps }, { data: posts }, { data: audits }] = await Promise.all([
     supabase.from('social_snapshots').select('*').eq('platform', 'instagram').order('taken_on').limit(52),
     supabase.from('social_posts').select('*').order('published_on', { ascending: false }).limit(100),
+    supabase.from('profile_audits').select('id,username,is_own,source,created_at,audit').order('created_at', { ascending: false }).limit(6),
   ]);
+  const linkOn = igConfigured();
   const sn = (snaps ?? []) as Snapshot[];
   const ps = (posts ?? []) as (Post & { id: string; url: string | null })[];
   const last = sn[sn.length - 1];
@@ -27,10 +35,39 @@ export default async function Social({ searchParams }: { searchParams: { ok?: st
       <PageHeader title="Analisi profilo" sub={profile.instagram_handle ? `Instagram @${profile.instagram_handle.replace(/^@/, '')}` : 'Instagram'} />
       <div className="wrap">
         <Flash searchParams={searchParams} />
-        <div className="banner info">
-          Inserisci i numeri da Instagram (Professional dashboard → Insight) una volta a settimana, insieme ai dati dei contenuti pubblicati.
-          L&apos;importazione automatica da Instagram è prevista in una versione successiva.
+        <div className="grid g2" style={{ marginBottom: 14, alignItems: 'start' }}>
+          <form action={analyzeFromLink} className="card pad">
+            <h3>Analizza un profilo dal link</h3>
+            <p className="muted small">Il tuo profilo o uno di riferimento. Luce legge i dati pubblici (follower, ultimi 30 contenuti, interazioni, bio) e ti restituisce un&apos;analisi con idee pronte.</p>
+            <label className="fld" htmlFor="link">Link o nome profilo</label>
+            <input className="fin" id="link" name="link" placeholder="instagram.com/nomeprofilo" defaultValue={profile.instagram_handle ?? ''} disabled={!linkOn} />
+            <div className="form-actions"><SubmitButton pendingText="Analisi in corso…">◎ Analizza</SubmitButton></div>
+            {!linkOn && <p className="muted small">In attivazione: richiede il collegamento della piattaforma a Meta. Nel frattempo usa gli screenshot.</p>}
+            <p className="muted small">Funziona con profili pubblici di tipo professionale (business o creator).</p>
+          </form>
+          <div className="card pad">
+            <h3>Oppure carica gli screenshot</h3>
+            <p className="muted small">Luce legge i numeri dalle schermate di Instagram, compresi quelli privati come copertura, salvataggi e visite, e li inserisce per te.</p>
+            <ScreenshotUpload action={analyzeFromScreenshots} />
+          </div>
         </div>
+
+        {audits && audits.length > 0 && (
+          <>
+            <div className="sec-label">Analisi del profilo</div>
+            <div className="card tbl-wrap" style={{ marginBottom: 14 }}>
+              <table className="tbl"><tbody>
+                {audits.map((a) => (
+                  <tr key={a.id}>
+                    <td><Link className="lnk" href={`/social/analisi/${a.id}`}>@{a.username}</Link> {a.is_own ? <span className="pill sage">tuo</span> : <span className="pill mut">riferimento</span>}</td>
+                    <td className="muted">{dateIt(a.created_at)}</td>
+                    <td className="r"><b>{(a.audit as { voto: number }).voto}/10</b></td>
+                  </tr>
+                ))}
+              </tbody></table>
+            </div>
+          </>
+        )}
 
         <div className="grid g4">
           <div className="card kpi"><div className="lbl">Follower</div><div className="val">{last ? num(last.followers) : '—'}</div>
