@@ -41,7 +41,7 @@ export default async function Social({ searchParams }: { searchParams: { ok?: st
             <p className="muted small">Il tuo profilo o uno di riferimento. Luce legge i dati pubblici (follower, ultimi 30 contenuti, interazioni, bio) e ti restituisce un&apos;analisi con idee pronte.</p>
             <label className="fld" htmlFor="link">Link o nome profilo</label>
             <input className="fin" id="link" name="link" placeholder="instagram.com/nomeprofilo" defaultValue={profile.instagram_handle ?? ''} disabled={!linkOn} />
-            <div className="form-actions"><SubmitButton pendingText="Analisi in corso…">◎ Analizza</SubmitButton></div>
+            <div className="form-actions"><SubmitButton pendingText="Analisi in corso…" disabled={!linkOn}>◎ Analizza</SubmitButton></div>
             {!linkOn && <p className="muted small">In attivazione: richiede il collegamento della piattaforma a Meta. Nel frattempo usa gli screenshot.</p>}
             <p className="muted small">Funziona con profili pubblici di tipo professionale (business o creator).</p>
           </form>
